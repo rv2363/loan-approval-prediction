@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>LoanAI - Smart Credit Risk Analyzer</title>
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap');
+
+        *{
+            margin:0;
+            padding:0;
+            box-sizing:border-box;
+            font-family:'Poppins',sans-serif;
+        }
+
+        body{
+            background: linear-gradient(135deg,#0b1020,#1e1b4b,#071426);
+            color:white;
+            padding:30px;
+        }
+
+        .container{
+            width:1100px;
+            margin:auto;
+        }
+
+        .hero{
+            background: linear-gradient(90deg,#6d28d9,#0f766e);
+            border-radius:25px;
+            padding:35px;
+            margin-bottom:25px;
+            box-shadow:0 0 30px rgba(124,58,237,.4);
+        }
+
+        .hero h1{
+            font-size:48px;
+            margin-bottom:10px;
+        }
+
+        .hero p{
+            font-size:18px;
+            opacity:0.9;
+        }
+
+        .main-grid{
+            display:grid;
+            grid-template-columns: 60% 38%;
+            gap:20px;
+        }
+
+        .card{
+            background: rgba(255,255,255,0.05);
+            backdrop-filter: blur(12px);
+            padding:25px;
+            border-radius:22px;
+            border:1px solid rgba(255,255,255,0.08);
+        }
+
+        .card h2{
+            margin-bottom:20px;
+            color:#86efac;
+        }
+
+        .form-grid{
+            display:grid;
+            grid-template-columns:1fr 1fr;
+            gap:15px;
+        }
+
+        input,select{
+            width:100%;
+            padding:14px;
+            background:#0f172a;
+            color:white;
+            border:1px solid #334155;
+            border-radius:12px;
+            font-size:14px;
+        }
+
+        input:focus,select:focus{
+            outline:none;
+            border:1px solid #22c55e;
+            box-shadow:0 0 10px rgba(34,197,94,.5);
+        }
+
+        button{
+            width:100%;
+            margin-top:20px;
+            padding:15px;
+            border:none;
+            border-radius:12px;
+            background: linear-gradient(90deg,#6366f1,#22c55e);
+            color:white;
+            font-size:18px;
+            cursor:pointer;
+            font-weight:600;
+        }
+
+        button:hover{
+            transform:scale(1.01);
+        }
+
+        #loader{
+            display:none;
+            text-align:center;
+            margin-top:20px;
+        }
+
+        .spinner{
+            width:55px;
+            height:55px;
+            border:6px solid #334155;
+            border-top:6px solid #22c55e;
+            border-radius:50%;
+            animation:spin 1s linear infinite;
+            margin:auto;
+        }
+
+        @keyframes spin{
+            100%{transform:rotate(360deg);}
+        }
+
+        .result-box{
+            min-height:420px;
+        }
+
+        .result{
+            margin-top:20px;
+            padding:18px;
+            background:#0f172a;
+            border-radius:16px;
+        }
+
+        .meter{
+            background:#334155;
+            border-radius:20px;
+            margin-top:8px;
+        }
+
+        .meter-fill{
+            background:linear-gradient(90deg,#7c3aed,#22c55e);
+            padding:8px;
+            text-align:center;
+            border-radius:20px;
+        }
+
+        .chatbox{
+            margin-top:25px;
+        }
+
+        #chatArea{
+            height:180px;
+            overflow:auto;
+            background:#0f172a;
+            padding:12px;
+            border-radius:12px;
+            margin-bottom:10px;
+        }
+
+        footer{
+            text-align:center;
+            margin-top:30px;
+            color:#94a3b8;
+        }
+
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <!-- Hero -->
+
+    <div class="hero">
+        <h1> LoanAI Smart Analyzer</h1>
+        <p>Explainable AI • CIBIL Based Decision Engine • Secure Banking Intelligence</p>
+    </div>
+
+    <div class="main-grid">
+
+        <!-- Left -->
+
+        <div class="card">
+
+            <h2> Applicant & Loan Information</h2>
+
+            <form action="/predict" method="post" onsubmit="showLoader()">
+
+                <div class="form-grid">
+
+                    <input type="number" name="person_age"
+                           placeholder="Applicant Age" required>
+
+                    <input type="number" name="person_income"
+                           placeholder="Annual Income" required>
+
+                    <select name="occupation" required>
+                        <option value="">Occupation Type</option>
+                        <option>Salaried</option>
+                        <option>Business Owner</option>
+                        <option>Freelancer</option>
+                        <option>Student</option>
+                    </select>
+
+                    <select name="education" required>
+                        <option value="">Education Level</option>
+                        <option>Post Graduate</option>
+                        <option>Graduate</option>
+                        <option>12th Pass</option>
+                        <option>Others</option>
+                    </select>
+
+                    <select name="loan_purpose" required>
+                        <option value="">Purpose of Loan</option>
+                        <option>PERSONAL</option>
+                        <option>EDUCATION</option>
+                        <option>MEDICAL</option>
+                        <option>VENTURE</option>
+                        <option>HOME_IMPROVEMENT</option>
+                        <option>DEBT_CONSOLIDATION</option>
+                    </select>
+
+                    <input type="number"
+                           name="loan_amnt"
+                           placeholder="Loan Amount Required"
+                           required>
+
+                    <input type="number"
+                           name="cibil_score"
+                           placeholder="CIBIL Score (300-900)"
+                           min="300"
+                           max="900"
+                           required>
+
+                    <select name="cb_person_default_on_file" required>
+                        <option value="">Previous Loan Default?</option>
+                        <option>Y</option>
+                        <option>N</option>
+                    </select>
+
+                    <input type="number"
+                           step="0.1"
+                           name="cb_person_cred_hist_length"
+                           placeholder="Banking Relationship (Years)"
+                           required>
+
+                </div>
+
+                <button type="submit"> Analyze Loan Eligibility</button>
+
+            </form>
+
+            <div id="loader">
+
+                <div class="spinner"></div>
+
+                <br>
+
+                <p>
+                     Verifying Identity <br>
+                     Checking CIBIL Database <br>
+                     Running AI Model
+                </p>
+
+            </div>
+
+        </div>
+
+        <!-- Right -->
+
+        <div class="card result-box">
+
+            <h2> AI Decision Report</h2>
+
+            {% if prediction_text %}
+
+            <div class="result">
+
+                <h2>{{ prediction_text }}</h2>
+
+                <br>
+
+                <p><b>Confidence:</b> {{ confidence }}%</p>
+
+                <br>
+
+                <p><b>CIBIL Score:</b> {{ cibil }}</p>
+
+                <div class="meter">
+                    <div class="meter-fill"
+                         style="width:{{ (cibil-300)/6 }}%;">
+                         Credit Strength
+                    </div>
+                </div>
+
+                <br>
+
+                <p><b>Risk Level:</b> {{ risk }}</p>
+
+                <br>
+
+                <p><b>AI Analysis:</b> {{ ai_text }}</p>
+
+                <br>
+
+                <b>Risk Factors:</b>
+
+                <ul>
+                    {% for reason in reasons %}
+                        <li>{{ reason }}</li>
+                    {% endfor %}
+                </ul>
+
+            </div>
+
+            {% else %}
+
+            <div class="result">
+                <h3>Result will appear here</h3>
+                <br>
+                <p>Fill the form and AI will analyze your eligibility.</p>
+            </div>
+
+            {% endif %}
+
+        </div>
+
+    </div>
+
+    <!-- Chatbot -->
+
+    <div class="card chatbox">
+
+        <h2>💬 AI Loan Assistant</h2>
+
+        <div id="chatArea"></div>
+
+        <input type="text"
+               id="userInput"
+               placeholder="Ask about CIBIL, loan rejection, documents...">
+
+        <button onclick="sendMessage()">Send</button>
+
+    </div>
+
+    <footer>
+        © 2026 Developed by Ravi Sharma | MCA Project | BIT Mesra
+    </footer>
+
+</div>
+
+<script>
+
+function showLoader(){
+    document.getElementById("loader").style.display="block";
+}
+
+function sendMessage(){
+
+    let msg=document.getElementById("userInput").value;
+
+    fetch("/chatbot",{
+
+        method:"POST",
+
+        headers:{
+            "Content-Type":"application/x-www-form-urlencoded"
+        },
+
+        body:"message="+msg
+    })
+
+    .then(response=>response.json())
+
+    .then(data=>{
+
+        let box=document.getElementById("chatArea");
+
+        box.innerHTML += "<p><b>You:</b> "+msg+"</p>";
+
+        box.innerHTML += "<p><b>Bot:</b> "+data.reply+"</p>";
+
+        document.getElementById("userInput").value="";
+    });
+}
+
+</script>
+
+</body>
+</html>
